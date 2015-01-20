@@ -49,8 +49,8 @@ ldr     r0,=0x20200000
 *     49  48   47  46   45  44  43   42  41  40
 * 00|000|000 |001|000|00 0|000|000|0 00|000|000
 *
-* Getting a 1 into that 3 bit chunk is easiest by first starting with a base
-* 32 bit binary representation of 1 (00000000 00000000 00000000 00000001).
+* Getting a 1 into that 3 bit chunk is easiest by first starting with a 32 bit
+* binary representation of 1 (00000000 00000000 00000000 00000001).
 * 
 * Shifting the 1 over to the left by 21 places will land in the 7th 3 bit chunk
 * that maps to pin 47. Notice that 3 * 7 = 21.
