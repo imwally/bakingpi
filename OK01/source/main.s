@@ -1,5 +1,5 @@
 /*
-* Tell the assembly that our code starts here.
+* Tell the assembler that our code starts here.
 *
 * "If we don't do this, the code in the alphabetically first file name will run
 * first!"
