@@ -1,0 +1,8 @@
+Bakingpi is a tutorial on writing simple operating systems for the Raspberry Pi
+in the ARM assembly language.
+
+http://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/
+
+This specific repository will be for my understanding with code comments written
+by me. The code is slightly different in places as I chose to use the smaller A+
+Raspberry Pi model.
