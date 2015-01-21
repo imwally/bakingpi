@@ -5,7 +5,6 @@
 * Since most of the code is similar to OK1, I will only write explanations for
 * the new bits of code.
 */
-
 .section .init
 .global _start
 _start:
@@ -57,6 +56,10 @@ str     r1,[r0,#32]
 * execute commands at different speeds. One could count down much faster than
 * another slower processor. Thankfully this code will work on most Raspberry
 * Pi's because they all have the same processors, at least as of early 2015. 
+*
+* One of the later lessons will go over a more universal and concrete way of
+* handling time by using the system's built-in counter. Until then, this method
+* works just as well. 
 *
 * First, a large number (4128768) is moved into register r2.
 * Next, a label is declared to state where the wait loop should start over.
