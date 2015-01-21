@@ -1,0 +1,7 @@
+Lesson 2 OK02
+
+http://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/ok02.html
+
+The OK02 lesson builds on OK01, by causing the 'OK' or 'ACT' LED to turn on and
+off repeatedly. It is assumed you have the code for the Lesson 1: OK01 operating
+system as a basis. 
