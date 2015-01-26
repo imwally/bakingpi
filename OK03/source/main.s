@@ -119,7 +119,7 @@ bne     wait1$
 
 
 /* 
-* Disabling the 47th GPIO pin (ACT LED) looks very similar the enable code
+* Disabling the 47th GPIO pin (ACT LED) looks very similar to the enable code
 * except that the pinVal register is set to 0, thus disabling the pin.
 */
 pinNum      .req r0
