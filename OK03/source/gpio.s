@@ -29,7 +29,7 @@ GetGpioAddress:
 * function will end by moving the lr register into the pc register.
 *
 * The function continues on by pushing lr onto the stack and moving r0 into r2
-* because SetGpioAddress makes use of both these registers. 
+* because GetGpioAddress makes use of both these registers. 
 */
 .globl SetGpioFunction
 SetGpioFunction:
