@@ -89,7 +89,7 @@ SetGpioFunction:
         * r2 = 14 + 7 = 21
         * r1 = 1<<21 = 00000000 00100000 00000000 00000000
         * write r1 to the location found in r0
-        *
+        */
         add     r2, r2,lsl #1
         lsl     r1,r2
         str     r1,[r0]
