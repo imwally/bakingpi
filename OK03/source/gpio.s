@@ -29,7 +29,7 @@ GetGpioAddress:
 * function will end by moving the lr register into the pc register.
 *
 * The function continues on by pushing lr onto the stack and moving r0 into r2
-* because GetGpioAddress makes use of both these registers. 
+* as GetGpioAddress makes use of both these registers. 
 */
 .globl SetGpioFunction
 SetGpioFunction:
@@ -40,6 +40,32 @@ SetGpioFunction:
     mov     r2,r0
     bl      GetGpioAddress
 
+    /*
+    * Where the magic happens. As mentioned in OK01, there are 6 banks of 4
+    * bytes where 3 bit chunks correspond to the function of a specific GPIO
+    * pin. The math used to find which bank location and 3 bit chunk is simple
+    * yet confusing at the same time. There are only 10 pins to each bank.
+    * Taking the same bit location and moving it up one bank will result in
+    * adding 10. For instance if the bit was in the 3 bit chunk of the first
+    * bank (0x20200000) at say pin 4, then moving up an address location
+    * (0x200004) will in turn result in pin 14. 
+    *
+    * Knowing this but reversing it will give the desired result needed to
+    * calculate both the bank and 3 bit location.
+    *
+    * The first step is to compare the pin number (r2) to 9 and if it is lower
+    * than or the same, this first chunk of the loop is finished, otherwise a
+    * bit of subtraction and addition takes place. If the pin number is say, 14
+    * then 10 is subtracted from it while 4 is added to the GPIO location. This
+    * results in the GPIO location of 0x200004 (pins 10-19) and a 4 which is
+    * used to then calculate the 4th 3 bit chunk that corresponds to pin 14 in
+    * that 32 bit bank.
+    *
+    * This simple loop has the nice property of both reducing the pin number
+    * down to a single digit (which relates to the 3 bit pin function) while
+    * simultaneously adding a 4 to the GPIO location that corresponds to the 32
+    * bit bank where the pin is located.
+    */
     functionLoop$:
         cmp     r2,#9
         subhi   r2,#10
