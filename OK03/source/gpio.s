@@ -72,6 +72,24 @@ SetGpioFunction:
         addhi   r0,#4
         bhi     functionLoop$
 
+        /*
+        * After the GPIO location and 3 bit section is found in the above loop
+        * the next step is to place a 1 in that 3 bit section and write it to
+        * the GPIO location. Multiplying the pin number by 3 will yield the
+        * location of where the bit should fall in the 32 bit bank. 
+        *
+        * The easiest way to multiply by 3 is first by shifting the binary
+        * representation of the number by 1 to the left and adding the number to
+        * this result.
+        *
+        * An example of this for the 47th GPIO pin looks like this:
+        *
+        * r2 = 7 = 00000111
+        * r2 = 7<<1 = 00001110 = 14
+        * r2 = 14 + 7 = 21
+        * r1 = 1<<21 = 00000000 00100000 00000000 00000000
+        * write r1 to the location found in r0
+        *
         add     r2, r2,lsl #1
         lsl     r1,r2
         str     r1,[r0]
@@ -83,7 +101,6 @@ SetGpio:
     pinNum      .req r0
     pinVal      .req r1
 
-
     cmp     pinNum,#53
     movhi   pc,lr
     push    {lr}
@@ -93,20 +110,17 @@ SetGpio:
     bl      GetGpioAddress
     gpioAddr    .req r0
 
-
     pinBank     .req r3
     lsr         pinBank,pinNum,#5
     lsl         pinBank,#2
     add         gpioAddr,pinBank
     .unreq      pinBank
 
-
     and         pinNum,#31
     setBit      .req r3
     mov         setBit,#1
     lsl         setBit,pinNum
     .unreq      pinNum
-
 
     teq        pinVal,#0
     .unreq      pinVal
