@@ -95,33 +95,91 @@ SetGpioFunction:
         str     r1,[r0]
         pop     {pc}
 
-
+/*
+* SetGpio will enable or disable a GPIO pin.
+*/
 .globl SetGpio
 SetGpio:
+    /*
+    * Set aliases for the registers that will hold the arguments for this
+    * function. Register r0 will hold the pin number while register r1 will hold
+    * the value of either 0 or 1 declaring on or off for that particular pin.
+    */
     pinNum      .req r0
     pinVal      .req r1
 
+    /*
+    * If the pin number is higher than 53 end the function.
+    */
     cmp     pinNum,#53
     movhi   pc,lr
+
+    /*
+    * Otherwise push lr onto the stack and continue on.
+    */
     push    {lr}
+
+    /*
+    * Move the pin number (r0) into r2 as GetGpioAddress will utilize register
+    * r0.
+    */
     mov     r2, pinNum
     .unreq  pinNum
     pinNum  .req r2
     bl      GetGpioAddress
-    gpioAddr    .req r0
 
+    /* 
+    * r0 will hold the base GPIO address and r3 will hold the pin bank.
+    */
+    gpioAddr    .req r0
     pinBank     .req r3
+
+    /* 
+    * GPSET0 and GPSET1 enable and disable GPIO pins. GPSET0 resides at
+    * 0x2020001C and controls the first 32 pins. GPSET1 is located at 0x20200020
+    * and controls pins 32-53.
+    * 
+    * To determine which bank the pin falls in the pin number can be divided by
+    * 32. Shifting the binary representation of the pin to the right by 5 is the
+    * same as diving the value by 32.
+    *
+    * The pin bank is then multiplied by 4 which is the same as shifting the
+    * binary representation of the number left by 2.
+    *
+    * pinBank will result in either 0x200000 or 0x200004
+    */
     lsr         pinBank,pinNum,#5
     lsl         pinBank,#2
     add         gpioAddr,pinBank
     .unreq      pinBank
 
+    /*
+    * Doing a bitwise AND operation on the pin number and 31 will give the
+    * result of dividing the pin number by 32 and leaving the remainder. This
+    * remainder will decide whether the bit needed to enable or disable the GPIO
+    * pin will fall in the first or second GPSETn bank.
+    *
+    * An example of this:
+    *
+    * pinNum = 47
+    * pinNum AND 31 = 15
+    *
+    * A 1 can now be set in the 15th bit by shifting setBit 15 spaces to the
+    * left. setBit will now contain the value needed to enable or disable the
+    * GPIO pin.
+    */
     and         pinNum,#31
     setBit      .req r3
     mov         setBit,#1
     lsl         setBit,pinNum
     .unreq      pinNum
 
+
+    /*
+    * The remaining lines will test if pinVal is equal to zero, if it is (streq)
+    * then the setBit will be stored at the GPIO address + 40 otherwise (strne)
+    * will store the setBit at the GPIO address + 28.
+    */
     teq        pinVal,#0
     .unreq      pinVal
     streq       setBit,[gpioAddr,#40]
