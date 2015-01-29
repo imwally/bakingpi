@@ -1,0 +1,7 @@
+Lesson 4 OK04
+
+http://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/ok04.html
+
+The OK04 lesson builds on OK03 by teaching how to use the timer to flash the
+'OK' or 'ACT' LED at precise intervals. It is assumed you have the code for the
+Lesson 3: OK03 operating system as a basis. 
