@@ -17,7 +17,6 @@ GetGpioAddress:
     ldr     r0,=0x20200000
     mov     pc,lr
 
-
 /*
 * The SetGpioFunction function will set the function of the GPIO pin. That is to
 * say the pin will be set as either an input or output.
@@ -173,7 +172,6 @@ SetGpio:
     mov         setBit,#1
     lsl         setBit,pinNum
     .unreq      pinNum
-
 
     /*
     * The remaining lines will test if pinVal is equal to zero, if it is (streq)
