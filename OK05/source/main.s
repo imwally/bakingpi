@@ -1,62 +1,50 @@
 .section .init
 .global _start
 _start:
-b   main
+    b main
 
-.section    .text
+.section .text
 main:
-mov         sp,#0x8000
+    mov sp,#0x8000
 
-/*
-* Set pin as output
-*/
-pinNum      .req r0
-pinFunc     .req r1
-mov         pinNum,#47
-mov         pinFunc,#1
-bl          SetGpioFunction
-.unreq      pinNum
-.unreq      pinFunc
+    /*
+    * Set GPIO pin 47 as output.
+    */
+    mov r0,#47
+    mov r1,#1
+    bl  SetGpioFunction
 
+    /*
+    * Load the SOS binary pattern into r4 and the sequence position bit into r5.
+    */
+    ldr r4,=pattern
+    ldr r4,[r4]
+    mov r5,#0
 
-loop$:
-/*
-* Enable pin
-*/
-pinNum      .req r0
-pinVal      .req r1
-mov         pinNum,#47
-mov         pinVal,#1
-bl          SetGpio
-.unreq      pinNum
-.unreq      pinVal
+    loop$:
+        mov r1,#1
+        lsl r1,r5
+        and r1,r4
 
+        /*
+        * Enable or disable pin 47 depending on the value in r1.
+        */
+        mov r0,#47
+        bl  SetGpio
 
-WaitTime    .req r0
-ldr         WaitTime,=100000
-bl          Wait
-.unreq      WaitTime
+        ldr r0,=100000
+        bl  Wait
 
+        /*
+        * Compare the sequence bit position to 32, if it's lower increment 1
+        * otherwise set it back to 0 and repeat.
+        */
+        cmp r5,#32
+        movhi r5,#0
+        addle r5,#1
 
-/*
-* Disable pin
-*/
-pinNum      .req r0
-pinVal      .req r1
-mov         pinNum,#47
-mov         pinVal,#0
-bl          SetGpio
-.unreq      pinNum
-.unreq      pinVal
-
-
-WaitTime    .req r0
-ldr         WaitTime,=100000
-bl          Wait
-.unreq      WaitTime
-
-
-b   loop$
+        b loop$
+        
 
 
 /*
@@ -71,5 +59,5 @@ b   loop$
 .section .data
 .align 2
 pattern:
-.int 0b11111111101010100010001000101010
+.int 0b00000000010101011101110111010101
 
